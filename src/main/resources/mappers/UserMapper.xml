@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.handong.web.room.dao.UserDao">
+
+    <resultMap id="UserResultMap" type="com.handong.web.room.vo.UserVO">
+        <id property="userNo" column="user_no"/>
+        <result property="studentId" column="student_id"/>
+        <result property="name" column="name"/>
+        <result property="phone" column="phone"/>
+        <result property="password" column="password"/>
+        <result property="gender" column="gender"/>
+        <result property="age" column="age"/>
+        <result property="language" column="language"/>
+        <result property="isAuth" column="is_auth"/>
+        <result property="createdAt" column="created_at"/>
+    </resultMap>
+
+    <insert id="insertUser" parameterType="com.handong.web.room.vo.UserVO">
+        INSERT INTO tb_user (
+            student_id, name, phone, password, gender, age, language, is_auth
+        ) VALUES (
+                     #{studentId}, #{name}, #{phone}, #{password}, #{gender}, #{age}, #{language}, 0
+                 )
+    </insert>
+
+    <select id="loginUser" parameterType="com.handong.web.room.vo.UserVO" resultMap="UserResultMap">
+        SELECT * FROM tb_user
+        WHERE student_id = #{studentId} AND password = #{password}
+    </select>
+
+    <select id="checkStudentId" resultType="int">
+        SELECT COUNT(*) FROM tb_user WHERE student_id = #{studentId}
+    </select>
+
+</mapper>
