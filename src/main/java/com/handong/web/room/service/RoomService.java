@@ -19,8 +19,8 @@ public class RoomService {
     }
 
     // 2. 방 전체 목록 조회
-    public List<RoomVO> getRoomList() {
-        return roomDao.selectRoomList();
+    public List<RoomVO> getRoomList(String roomType, String sort) {
+        return roomDao.selectRoomList(roomType, sort);
     }
 
     // 3. 방 상세 정보 조회 (조회수 증가 포함)
@@ -33,5 +33,9 @@ public class RoomService {
     // 4. 방 삭제
     public void removeRoom(int roomNo) {
         roomDao.deleteRoom(roomNo);
+    }
+
+    public void updateRoom(RoomVO vo) {
+        roomDao.updateRoom(vo);
     }
 }
