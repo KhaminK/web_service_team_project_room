@@ -14,13 +14,14 @@
         <result property="language" column="language"/>
         <result property="isAuth" column="is_auth"/>
         <result property="createdAt" column="created_at"/>
+        <result property="profileImg" column="profile_img"/>
     </resultMap>
 
     <insert id="insertUser" parameterType="com.handong.web.room.vo.UserVO">
         INSERT INTO tb_user (
-            student_id, name, phone, password, gender, age, language, is_auth
+            student_id, name, phone, password, gender, age, language, is_auth, profile_img
         ) VALUES (
-                     #{studentId}, #{name}, #{phone}, #{password}, #{gender}, #{age}, #{language}, 0
+                     #{studentId}, #{name}, #{phone}, #{password}, #{gender}, #{age}, #{language}, 0, #{profileImg}
                  )
     </insert>
 
@@ -31,6 +32,27 @@
 
     <select id="checkStudentId" resultType="int">
         SELECT COUNT(*) FROM tb_user WHERE student_id = #{studentId}
+    </select>
+
+    <update id="updateProfileImg" parameterType="com.handong.web.room.vo.UserVO">
+        UPDATE tb_user
+        SET profile_img = #{profileImg}
+        WHERE user_no = #{userNo}
+    </update>
+
+    <update id="updateUser">
+        UPDATE tb_user
+        SET
+            phone = #{phone},
+            age = #{age},
+            gender = #{gender},
+            language = #{language},
+            profile_img = #{profileImg}
+        WHERE user_no = #{userNo}
+    </update>
+
+    <select id="getUser" resultMap="UserResultMap">
+        SELECT * FROM tb_user WHERE user_no = #{userNo}
     </select>
 
 </mapper>
