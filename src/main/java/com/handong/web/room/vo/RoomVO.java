@@ -23,4 +23,5 @@ public class RoomVO {
     private String filename2;
     private String filename3;
     private String writerName;   // 작성자 이름 (tb_user와 조인해서 가져올 예정)
+    private String writerGender;
 }

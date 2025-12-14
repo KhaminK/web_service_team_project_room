@@ -7,34 +7,25 @@
     <div class="col-lg-7 mb-4">
         <div class="bg-light rounded-4 overflow-hidden shadow-sm position-relative" style="height: 450px;">
             <c:choose>
-                <%-- 이미지가 하나라도 있으면 슬라이드 시작 --%>
                 <c:when test="${not empty room.filename1 or not empty room.filename2 or not empty room.filename3}">
                     <div id="roomCarousel" class="carousel slide h-100" data-bs-ride="carousel">
                         <div class="carousel-inner h-100">
-
-                                <%-- 첫 번째 사진 --%>
                             <c:if test="${not empty room.filename1}">
                                 <div class="carousel-item active h-100">
                                     <img src="${pageContext.request.contextPath}/resources/upload/${room.filename1}" class="d-block w-100 h-100" style="object-fit: cover;">
                                 </div>
                             </c:if>
-
-                                <%-- 두 번째 사진 --%>
                             <c:if test="${not empty room.filename2}">
                                 <div class="carousel-item h-100 ${empty room.filename1 ? 'active' : ''}">
                                     <img src="${pageContext.request.contextPath}/resources/upload/${room.filename2}" class="d-block w-100 h-100" style="object-fit: cover;">
                                 </div>
                             </c:if>
-
-                                <%-- 세 번째 사진 --%>
                             <c:if test="${not empty room.filename3}">
                                 <div class="carousel-item h-100">
                                     <img src="${pageContext.request.contextPath}/resources/upload/${room.filename3}" class="d-block w-100 h-100" style="object-fit: cover;">
                                 </div>
                             </c:if>
                         </div>
-
-                            <%-- 좌우 컨트롤 버튼 (사진이 2장 이상일 때만 표시) --%>
                         <button class="carousel-control-prev" type="button" data-bs-target="#roomCarousel" data-bs-slide="prev">
                             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                         </button>
@@ -43,8 +34,6 @@
                         </button>
                     </div>
                 </c:when>
-
-                <%-- 이미지가 아예 없으면 기본 아이콘 --%>
                 <c:otherwise>
                     <div class="d-flex align-items-center justify-content-center h-100">
                         <i class="bi bi-image text-secondary" style="font-size: 5rem; opacity: 0.3;"></i>
@@ -56,9 +45,11 @@
 
     <div class="col-lg-5">
         <div class="custom-card h-100 p-4 pt-5">
-            <div class="mb-3">
+            <div class="mb-3 d-flex align-items-center gap-2">
                 <span class="badge bg-primary rounded-pill px-3 py-2">${room.roomType}</span>
-                <span class="badge bg-success rounded-pill px-3 py-2 ms-1">거래가능</span>
+                <span class="badge bg-success rounded-pill px-3 py-2">거래가능</span>
+
+                <span class="ms-auto text-muted small"><i class="bi bi-eye-fill"></i> ${room.viewCount}</span>
             </div>
 
             <h2 class="fw-bold mb-3" style="word-break: keep-all;">${room.title}</h2>
@@ -88,10 +79,27 @@
                     </div>
                 </div>
                 <div class="d-flex">
+                    <i class="bi bi-bus-front-fill text-muted me-3 fs-5"></i>
+                    <div>
+                        <span class="d-block fw-bold text-dark">버스 정류장</span>
+                        <span class="text-muted small">${room.busDistance}</span>
+                    </div>
+                </div>
+
+                <div class="d-flex">
                     <i class="bi bi-person-circle text-muted me-3 fs-5"></i>
                     <div>
                         <span class="d-block fw-bold text-dark">작성자</span>
-                        <span class="text-muted small">${room.writerName} (인증됨)</span>
+                        <span class="text-muted small d-flex align-items-center">
+                            <c:choose>
+                                <c:when test="${room.writerGender == 'M'}">
+                                    <span class="badge bg-primary bg-opacity-10 text-primary border border-primary ms-2" style="font-size: 0.75rem;">남성</span>
+                                </c:when>
+                                <c:when test="${room.writerGender == 'F'}">
+                                    <span class="badge bg-danger bg-opacity-10 text-danger border border-danger ms-2" style="font-size: 0.75rem;">여성</span>
+                                </c:when>
+                            </c:choose>
+                        </span>
                     </div>
                 </div>
             </div>

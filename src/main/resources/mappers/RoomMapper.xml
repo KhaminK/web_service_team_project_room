@@ -22,6 +22,7 @@
         <result property="filename2" column="filename2"/>
         <result property="filename3" column="filename3"/>
         <result property="writerName" column="writer_name"/>
+        <result property="writerGender" column="writer_gender"/>
     </resultMap>
 
     <insert id="insertRoom" parameterType="com.handong.web.room.vo.RoomVO">
@@ -56,9 +57,11 @@
     </select>
 
     <select id="selectRoomDetail" resultMap="RoomResultMap">
-        SELECT r.*, u.name as writer_name
-        FROM tb_room r
-                 JOIN tb_user u ON r.writer_id = u.user_no
+        SELECT
+            r.*,
+            u.name as writer_name,
+            u.gender as writer_gender  FROM tb_room r
+                                                JOIN tb_user u ON r.writer_id = u.user_no
         WHERE r.room_no = #{roomNo}
     </select>
 
