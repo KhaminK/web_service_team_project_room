@@ -17,4 +17,5 @@ public class UserVO {
     private Date createdAt;      // created_at
     private String filename;     // user_profile_image
     private String role;         // admin, user
+    private String profileImg;   // profile_img
 }

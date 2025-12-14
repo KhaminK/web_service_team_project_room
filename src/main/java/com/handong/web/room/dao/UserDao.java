@@ -23,4 +23,10 @@ public interface UserDao {
 
     // 5. 유저 강제 탈퇴 (관리자용)
     void deleteUser(int userNo);
+    // 4. 프로필 이미지 업데이트
+    void updateProfileImg(UserVO vo);
+
+    // 아래 두 줄을 인터페이스 안에 추가하세요
+    public void updateUser(UserVO vo);
+    public UserVO getUser(int userNo);
 }
