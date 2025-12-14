@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.handong.web.room.dao.UserDao">
+
+    <resultMap id="UserResultMap" type="com.handong.web.room.vo.UserVO">
+        <id property="userNo" column="user_no"/>
+        <result property="studentId" column="student_id"/>
+        <result property="name" column="name"/>
+        <result property="phone" column="phone"/>
+        <result property="password" column="password"/>
+        <result property="gender" column="gender"/>
+        <result property="age" column="age"/>
+        <result property="language" column="language"/>
+        <result property="isAuth" column="is_auth"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="profileImg" column="profile_img"/>
+    </resultMap>
+
+    <insert id="insertUser" parameterType="com.handong.web.room.vo.UserVO">
+        INSERT INTO tb_user (
+            student_id, name, phone, password, gender, age, language, is_auth, profile_img
+        ) VALUES (
+                     #{studentId}, #{name}, #{phone}, #{password}, #{gender}, #{age}, #{language}, 0, #{profileImg}
+                 )
+    </insert>
+
+    <select id="loginUser" parameterType="com.handong.web.room.vo.UserVO" resultMap="UserResultMap">
+        SELECT * FROM tb_user
+        WHERE student_id = #{studentId} AND password = #{password}
+    </select>
+
+    <select id="checkStudentId" resultType="int">
+        SELECT COUNT(*) FROM tb_user WHERE student_id = #{studentId}
+    </select>
+
+    <update id="updateProfileImg" parameterType="com.handong.web.room.vo.UserVO">
+        UPDATE tb_user
+        SET profile_img = #{profileImg}
+        WHERE user_no = #{userNo}
+    </update>
+
+    <update id="updateUser">
+        UPDATE tb_user
+        SET
+            phone = #{phone},
+            age = #{age},
+            gender = #{gender},
+            language = #{language},
+            profile_img = #{profileImg}
+        WHERE user_no = #{userNo}
+    </update>
+
+    <select id="getUser" resultMap="UserResultMap">
+        SELECT * FROM tb_user WHERE user_no = #{userNo}
+    </select>
+
+</mapper>
