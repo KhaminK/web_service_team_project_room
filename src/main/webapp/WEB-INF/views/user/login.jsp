@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ include file="../include/header.jsp" %>
 
 <div class="row justify-content-center align-items-center" style="min-height: 75vh;">
@@ -10,7 +11,7 @@
                 <p class="text-muted" style="font-size: 0.95rem;">한동인을 위한 안전한 자취방 플랫폼</p>
             </div>
 
-            <form action="/user/login" method="post">
+            <form action="${pageContext.request.contextPath}/user/login" method="post">
                 <div class="mb-3">
                     <label class="form-label">학번</label>
                     <input type="text" name="studentId" class="form-control" placeholder="학번을 입력해주세요 (예: 22200xxx)" required>
@@ -27,7 +28,7 @@
 
                 <div class="text-center">
                     <span class="text-muted small">아직 계정이 없으신가요?</span>
-                    <a href="/user/signup" class="text-decoration-none fw-bold ms-2" style="color:var(--primary)">회원가입</a>
+                    <a href="${pageContext.request.contextPath}/user/signup" class="text-decoration-none fw-bold ms-2" style="color:var(--primary)">회원가입</a>
                 </div>
             </form>
 

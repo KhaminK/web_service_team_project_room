@@ -4,10 +4,13 @@
 <mapper namespace="com.handong.web.room.dao.RoomDao">
 
     <resultMap id="RoomResultMap" type="com.handong.web.room.vo.RoomVO">
-        <id property="roomNo" column="room_no"/>            <result property="writerId" column="writer_id"/>    <result property="title" column="title"/>
+        <id property="roomNo" column="room_no"/>
+        <result property="writerId" column="writer_id"/>
+        <result property="title" column="title"/>
         <result property="address" column="address"/>
         <result property="addressDetail" column="address_detail"/>
         <result property="price" column="price"/>
+        <result property="deposit" column="deposit"/>
         <result property="roomType" column="room_type"/>
         <result property="busDistance" column="bus_distance"/>
         <result property="conditionScore" column="condition_score"/>
@@ -15,49 +18,80 @@
         <result property="viewCount" column="view_count"/>
         <result property="status" column="status"/>
         <result property="createdAt" column="created_at"/>
-
+        <result property="filename1" column="filename1"/>
+        <result property="filename2" column="filename2"/>
+        <result property="filename3" column="filename3"/>
         <result property="writerName" column="writer_name"/>
+        <result property="writerGender" column="writer_gender"/>
     </resultMap>
 
     <insert id="insertRoom" parameterType="com.handong.web.room.vo.RoomVO">
-        INSERT INTO tb_room (
-            writer_id, title, address, address_detail,
-            price, room_type, bus_distance, condition_score,
-            content, view_count, status, created_at
-        ) VALUES (
-                     #{writerId}, #{title}, #{address}, #{addressDetail},
-                     #{price}, #{roomType}, #{busDistance}, #{conditionScore},
-                     #{content}, 0, 'ACTIVE', NOW()
-                 )
-    </insert>
+    INSERT INTO tb_room (writer_id, title, address, address_detail,
+                         price, deposit, room_type, bus_distance, condition_score,
+                         content, view_count, status, created_at,
+                         filename1, filename2, filename3)
+    VALUES (#{writerId}, #{title}, #{address}, #{addressDetail},
+            #{price}, #{deposit}, #{roomType}, #{busDistance}, #{conditionScore},
+            #{content}, 0, 'ACTIVE', NOW(),
+            #{filename1}, #{filename2}, #{filename3})
+</insert>
 
     <select id="selectRoomList" resultMap="RoomResultMap">
-        SELECT
-            r.*,
-            u.name as writer_name
+        SELECT r.*, u.name as writer_name
         FROM tb_room r
-                 JOIN tb_user u ON r.writer_id = u.user_no
-        ORDER BY r.created_at DESC
+        JOIN tb_user u ON r.writer_id = u.user_no
+        WHERE 1=1
+        <if test="roomType != null and roomType != '' and roomType != 'all'">
+            AND r.room_type = #{roomType}
+        </if>
+
+        ORDER BY
+        <choose>
+            <when test="sort == 'price_asc'">
+                r.price ASC  </when>
+            <when test="sort == 'price_desc'">
+                r.price DESC </when>
+            <otherwise>
+                r.created_at DESC </otherwise>
+        </choose>
     </select>
 
     <select id="selectRoomDetail" resultMap="RoomResultMap">
         SELECT
             r.*,
-            u.name as writer_name
-        FROM tb_room r
-                 JOIN tb_user u ON r.writer_id = u.user_no
+            u.name as writer_name,
+            u.gender as writer_gender  FROM tb_room r
+                                                JOIN tb_user u ON r.writer_id = u.user_no
         WHERE r.room_no = #{roomNo}
     </select>
 
+    <select id="countAllRooms" resultType="int">
+        SELECT COUNT(*) FROM tb_room
+    </select>
+
     <update id="increaseViewCount">
-        UPDATE tb_room
-        SET view_count = view_count + 1
-        WHERE room_no = #{roomNo}
+        UPDATE tb_room SET view_count = view_count + 1 WHERE room_no = #{roomNo}
     </update>
 
     <delete id="deleteRoom">
-        DELETE FROM tb_room
-        WHERE room_no = #{roomNo}
+        DELETE FROM tb_room WHERE room_no = #{roomNo}
     </delete>
+
+    <update id="updateRoom" parameterType="com.handong.web.room.vo.RoomVO">
+        UPDATE tb_room
+        SET
+            title = #{title},
+            price = #{price},
+            deposit = #{deposit},
+            room_type = #{roomType},
+            bus_distance = #{busDistance},
+            address = #{address},
+            address_detail = #{addressDetail},
+            content = #{content},
+            filename1 = #{filename1},
+            filename2 = #{filename2},
+            filename3 = #{filename3}
+        WHERE room_no = #{roomNo}
+    </update>
 
 </mapper>

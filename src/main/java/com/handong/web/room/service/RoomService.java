@@ -19,8 +19,13 @@ public class RoomService {
     }
 
     // 2. 방 전체 목록 조회
+    public List<RoomVO> getRoomList(String roomType, String sort) {
+        return roomDao.selectRoomList(roomType, sort);
+    }
+
     public List<RoomVO> getRoomList() {
-        return roomDao.selectRoomList();
+        // 아무 조건이 없으면 -> "전체(all)"를 "최신순(latest)"으로 가져오라고 시킴
+        return getRoomList("all", "latest");
     }
 
     // 3. 방 상세 정보 조회 (조회수 증가 포함)
@@ -33,5 +38,14 @@ public class RoomService {
     // 4. 방 삭제
     public void removeRoom(int roomNo) {
         roomDao.deleteRoom(roomNo);
+    }
+
+    public void updateRoom(RoomVO vo) {
+        roomDao.updateRoom(vo);
+    }
+
+    // 관리자용: 총 매물 수
+    public int countRooms() {
+        return roomDao.countAllRooms();
     }
 }
