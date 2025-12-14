@@ -99,7 +99,7 @@
         <h2>내 정보 수정</h2>
     </div>
 
-    <form action="/user/update" method="post" enctype="multipart/form-data">
+    <form action="${pageContext.request.contextPath}/user/update" method="post" enctype="multipart/form-data">
 
         <div class="profile-preview-box">
             <c:choose>
@@ -150,7 +150,7 @@
         </div>
 
         <button type="submit" class="btn-submit">수정 완료</button>
-        <a href="/user/profile" class="btn-cancel">취소하고 돌아가기</a>
+        <a href="${pageContext.request.contextPath}/user/profile" class="btn-cancel">취소하고 돌아가기</a>
     </form>
 </div>
 

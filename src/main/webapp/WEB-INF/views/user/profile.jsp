@@ -185,7 +185,7 @@
                 </div>
             </div>
 
-            <a href="/user/edit" class="btn-edit">
+            <a href="${pageContext.request.contextPath}/user/edit" class="btn-edit">
                 정보 수정하기
             </a>
 

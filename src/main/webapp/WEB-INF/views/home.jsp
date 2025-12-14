@@ -10,7 +10,7 @@
         border-bottom-right-radius: 40px;
         box-shadow: 0 2px 10px rgba(0,0,0,0.03);
         text-align: center;
-        margin-top: -24px; /* 헤더 여백 보정 */
+        margin-top: -80px; /* 헤더 여백 보정 */
     }
 
     .hero-title { font-size: 3.5rem; font-weight: 800; margin-bottom: 10px; line-height: 1.2; letter-spacing: -1px; }

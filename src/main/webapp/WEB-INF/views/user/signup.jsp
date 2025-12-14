@@ -7,7 +7,7 @@
         <div class="custom-card">
             <h2 class="fw-bold text-center mb-5">회원가입</h2>
 
-            <form action="/user/signup" method="post" enctype="multipart/form-data">
+            <form action="${pageContext.request.contextPath}/user/signup" method="post" enctype="multipart/form-data">
 
                 <h5 class="fw-bold mb-3 ms-1">프로필 사진</h5>
                 <div class="mb-4 text-center p-4" style="background: #f8f9fa; border-radius: 12px;">
