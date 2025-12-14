@@ -30,6 +30,8 @@ public class UserService {
     // 관리자용: 유저 삭제
     public void deleteUser(int userNo) {
         userDao.deleteUser(userNo);
+    }
+
     // 프로필 이미지 수정 (사진만 바꿀 때)
     public void updateProfileImg(UserVO vo) {
         userDao.updateProfileImg(vo);

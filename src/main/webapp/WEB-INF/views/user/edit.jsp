@@ -146,7 +146,7 @@
 
         <div class="form-group">
             <label class="form-label">사용 언어</label>
-            <input type="text" name="language" class="form-control" value="${loginUser.language}" placeholder="예: Java, Python">
+            <input type="text" name="language" class="form-control" value="${loginUser.language}" placeholder="예: Korean, English, Khmer">
         </div>
 
         <button type="submit" class="btn-submit">수정 완료</button>
