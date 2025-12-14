@@ -3,6 +3,11 @@
 
 <mapper namespace="com.handong.web.room.dao.UserDao">
 
+    <insert id="insertUser">
+        INSERT INTO tb_user (
+            student_id, name, phone, password, gender, age, language, is_auth, role, created_at
+        ) VALUES (
+                     #{studentId}, #{name}, #{phone}, #{password}, #{gender}, #{age}, #{language}, 0, 'USER', NOW()
     <resultMap id="UserResultMap" type="com.handong.web.room.vo.UserVO">
         <id property="userNo" column="user_no"/>
         <result property="studentId" column="student_id"/>
@@ -25,7 +30,7 @@
                  )
     </insert>
 
-    <select id="loginUser" parameterType="com.handong.web.room.vo.UserVO" resultMap="UserResultMap">
+    <select id="loginUser" resultType="com.handong.web.room.vo.UserVO">
         SELECT * FROM tb_user
         WHERE student_id = #{studentId} AND password = #{password}
     </select>
@@ -34,6 +39,14 @@
         SELECT COUNT(*) FROM tb_user WHERE student_id = #{studentId}
     </select>
 
+    <select id="selectAllUsers" resultType="com.handong.web.room.vo.UserVO">
+        SELECT * FROM tb_user
+        WHERE role != 'ADMIN'  ORDER BY created_at DESC
+    </select>
+
+    <delete id="deleteUser">
+        DELETE FROM tb_user WHERE user_no = #{userNo}
+    </delete>
     <update id="updateProfileImg" parameterType="com.handong.web.room.vo.UserVO">
         UPDATE tb_user
         SET profile_img = #{profileImg}

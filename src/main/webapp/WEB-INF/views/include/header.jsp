@@ -14,39 +14,63 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
     <style>
-        /* [Design System] Toss & Apple Style Variables */
+        /* [Design System] 전역 변수 설정 */
         :root {
-            --bg-color: #F9FAFB;       /* 배경: 아주 연한 회색 */
-            --text-main: #191F28;      /* 텍스트: 진한 검정 (Toss Black) */
-            --text-sub: #8B95A1;       /* 텍스트: 연한 회색 (Toss Gray) */
-            --primary: #3182F6;        /* 메인 컬러: Toss Blue */
+            --bg-color: #F9FAFB;
+            --text-main: #191F28;
+            --text-sub: #8B95A1;
+            --primary: #3182F6;
             --primary-hover: #1b64da;
-            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); /* 부드러운 그림자 */
-            --radius-lg: 24px;         /* 카드 라운딩 */
-            --radius-md: 12px;         /* 버튼/인풋 라운딩 */
-            --input-bg: #F2F4F6;       /* 인풋 배경색 */
+            --input-bg: #F2F4F6;
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            --radius-lg: 24px;
+            --radius-md: 14px;
         }
 
         body {
             font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-main);
-            padding-top: 80px; /* 헤더 높이만큼 상단 여백 확보 */
+            padding-top: 80px;
             word-break: keep-all;
+            overflow-y: scroll;
         }
 
-        /* 1. 네비게이션 바 (Glassmorphism 적용) */
+        /* 네비게이션 바 */
         .navbar {
-            background-color: rgba(255, 255, 255, 0.8) !important;
-            backdrop-filter: blur(12px); /* 유리처럼 흐리게 */
+            background-color: rgba(255, 255, 255, 0.9) !important;
+            backdrop-filter: blur(12px);
             border-bottom: 1px solid rgba(0,0,0,0.05);
             height: 70px;
+            padding: 0;
         }
-        .navbar-brand { font-weight: 800; color: var(--text-main) !important; font-size: 1.4rem; letter-spacing: -0.5px; }
-        .nav-link { font-weight: 600; color: var(--text-sub) !important; transition: color 0.2s; }
+
+        .navbar .container {
+            height: 100%;
+            display: flex;
+            align-items: center;
+        }
+
+        /* 로고 스타일 */
+        .navbar-brand {
+            font-weight: 800;
+            color: var(--text-main) !important;
+            font-size: 26px !important;
+            letter-spacing: -0.5px;
+            margin-right: 30px;
+            padding: 0;
+            line-height: 1;
+        }
+
+        .nav-link {
+            font-weight: 600;
+            color: var(--text-sub) !important;
+            font-size: 16px;
+            transition: color 0.2s;
+        }
         .nav-link:hover { color: var(--primary) !important; }
 
-        /* 2. 공통 카드 스타일 */
+        /* 공통 요소 스타일 */
         .custom-card {
             background: white;
             border-radius: var(--radius-lg);
@@ -55,42 +79,49 @@
             padding: 40px;
         }
 
-        /* 3. 공통 입력창(Input) 스타일 */
         .form-control, .form-select {
             background-color: var(--input-bg);
             border: 2px solid transparent;
             border-radius: var(--radius-md);
             padding: 16px;
             font-size: 1rem;
-            transition: all 0.2s;
             color: var(--text-main);
         }
         .form-control:focus, .form-select:focus {
             background-color: #fff;
             border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(49, 130, 246, 0.1); /* 포커스 시 파란 번짐 효과 */
+            box-shadow: 0 0 0 4px rgba(49, 130, 246, 0.1);
         }
         .form-label { font-weight: 700; margin-bottom: 8px; color: #4E5968; font-size: 0.95rem; }
 
-        /* 4. 공통 버튼 스타일 */
+        /* 버튼 스타일 */
         .btn-primary {
             background-color: var(--primary);
             border: none;
             border-radius: var(--radius-md);
-            padding: 14px 20px;
+            padding: 12px 20px;
             font-weight: 700;
-            font-size: 1rem;
-            transition: background 0.2s;
         }
         .btn-primary:hover { background-color: var(--primary-hover); }
 
-        .btn-secondary {
-            background-color: #E8F3FF; /* 연한 파랑 배경 */
-            color: var(--primary);
+        /* 로그아웃 버튼 스타일 */
+        .btn-logout {
+            background-color: var(--input-bg) !important;
+            color: #4E5968 !important;
             border: none;
-            border-radius: var(--radius-md);
-            padding: 14px 20px;
+            border-radius: 50px;
+            padding: 8px 20px;
             font-weight: 700;
+            font-size: 14px;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn-logout:hover {
+            background-color: #e1e4e8 !important;
+            color: var(--text-main) !important;
         }
         .btn-secondary:hover { background-color: #dbeaff; color: var(--primary-hover); }
 
@@ -127,45 +158,55 @@
 
 <nav class="navbar navbar-expand-lg fixed-top">
     <div class="container">
-        <a class="navbar-brand" href="/">HanBang</a>
+        <a class="navbar-brand" href="${pageContext.request.contextPath}/">HanBang</a>
+
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
 
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav me-auto ms-4">
-                <li class="nav-item"><a class="nav-link" href="/room/list">방 구하기</a></li>
-                <li class="nav-item"><a class="nav-link" href="/room/write">방 내놓기</a></li>
+            <ul class="navbar-nav me-auto">
+                <c:if test="${sessionScope.loginUser.role != 'ADMIN'}">
+                    <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/room/list">방 구하기</a></li>
+                    <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/room/write">방 내놓기</a></li>
+                </c:if>
             </ul>
 
             <div class="d-flex align-items-center gap-2">
                 <c:if test="${empty sessionScope.loginUser}">
-                    <a href="/user/login" class="btn text-muted fw-bold btn-sm px-3" style="font-size: 0.95rem;">로그인</a>
-                    <a href="/user/signup" class="btn btn-primary btn-sm px-4 rounded-pill" style="padding: 8px 20px;">회원가입</a>
+                    <a href="${pageContext.request.contextPath}/user/login" class="text-decoration-none text-muted fw-bold me-3" style="font-size: 15px;">로그인</a>
+                    <a href="${pageContext.request.contextPath}/user/signup" class="btn btn-primary btn-sm px-4 rounded-pill">회원가입</a>
                 </c:if>
 
                 <c:if test="${not empty sessionScope.loginUser}">
-                    <a href="/user/profile" class="profile-link me-3">
+<%-- [통합된 코드] 프로필 UI + 관리자 버튼 + 경로 자동 보정 --%>
 
-                        <c:choose>
-                            <c:when test="${not empty sessionScope.loginUser.profileImg}">
-                                <img src="${pageContext.request.contextPath}/resources/upload/${sessionScope.loginUser.profileImg}"
-                                     alt="프로필"
-                                     class="profile-avatar">
-                            </c:when>
-                            <c:otherwise>
-                                <div class="profile-avatar" style="display:inline-flex; align-items:center; justify-content:center; background-color:#E8F3FF; color:#3182F6; font-weight:700;">
-                                        ${fn:substring(sessionScope.loginUser.name, 0, 1)}
-                                </div>
-                            </c:otherwise>
-                        </c:choose>
+<a href="${pageContext.request.contextPath}/user/profile" class="profile-link me-3">
+    <c:choose>
+        <c:when test="${not empty sessionScope.loginUser.profileImg}">
+            <img src="${pageContext.request.contextPath}/resources/upload/${sessionScope.loginUser.profileImg}"
+                 alt="프로필"
+                 class="profile-avatar">
+        </c:when>
+        <c:otherwise>
+            <div class="profile-avatar" style="display:inline-flex; align-items:center; justify-content:center; background-color:#E8F3FF; color:#3182F6; font-weight:700;">
+                ${fn:substring(sessionScope.loginUser.name, 0, 1)}
+            </div>
+        </c:otherwise>
+    </c:choose>
 
-                        <span style="font-size:0.95rem; font-weight: 700;">
-                            ${sessionScope.loginUser.name}님
-                        </span>
-                    </a>
+    <span style="font-size:0.95rem; font-weight: 700;">
+        ${sessionScope.loginUser.name}님
+    </span>
+</a>
 
-                    <a href="/user/logout" class="btn btn-light btn-sm text-secondary rounded-pill border px-3">로그아웃</a>
+<c:if test="${sessionScope.loginUser.role == 'ADMIN'}">
+    <a href="${pageContext.request.contextPath}/admin/dashboard" class="btn btn-dark rounded-pill btn-sm px-3 me-2 fw-bold">
+        <i class="bi bi-gear-fill"></i> 관리
+    </a>
+</c:if>
+
+<a href="${pageContext.request.contextPath}/user/logout" class="btn btn-light btn-sm text-secondary rounded-pill border px-3">로그아웃</a>
                 </c:if>
             </div>
         </div>

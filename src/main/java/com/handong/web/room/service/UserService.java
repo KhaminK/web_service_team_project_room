@@ -5,6 +5,8 @@ import com.handong.web.room.vo.UserVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserService {
 
@@ -21,6 +23,13 @@ public class UserService {
         return userDao.loginUser(vo);
     }
 
+    // 관리자용: 전체 유저 목록
+    public List<UserVO> getAllUsers() {
+        return userDao.selectAllUsers();
+    }
+    // 관리자용: 유저 삭제
+    public void deleteUser(int userNo) {
+        userDao.deleteUser(userNo);
     // 프로필 이미지 수정 (사진만 바꿀 때)
     public void updateProfileImg(UserVO vo) {
         userDao.updateProfileImg(vo);

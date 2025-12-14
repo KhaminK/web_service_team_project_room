@@ -18,6 +18,13 @@
         <property name="dataSource" ref="dataSource" />
         <property name="mapperLocations" value="classpath:mappers/*.xml" />
         <property name="typeAliasesPackage" value="com.handong.web.room.vo" />
+
+        <property name="configuration">
+            <bean class="org.apache.ibatis.session.Configuration">
+                <property name="mapUnderscoreToCamelCase" value="true"/>
+            </bean>
+        </property>
+
     </bean>
 
     <mybatis-spring:scan base-package="com.handong.web.room.dao"/>

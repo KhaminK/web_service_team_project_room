@@ -2,6 +2,7 @@ package com.handong.web.room.dao;
 
 import com.handong.web.room.vo.RoomVO;
 import org.springframework.stereotype.Repository;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -12,7 +13,7 @@ public interface RoomDao {
     void insertRoom(RoomVO vo);
 
     // 2. 매물 전체 목록 조회 (Mapper ID: selectRoomList)
-    List<RoomVO> selectRoomList();
+    List<RoomVO> selectRoomList(@Param("roomType") String roomType, @Param("sort") String sort);
 
     // 3. 매물 상세 조회 (Mapper ID: selectRoomDetail)
     RoomVO selectRoomDetail(int roomNo);
@@ -22,4 +23,8 @@ public interface RoomDao {
 
     // 5. 매물 삭제 (Mapper ID: deleteRoom)
     void deleteRoom(int roomNo);
+
+    void updateRoom(RoomVO vo);
+
+    int countAllRooms();
 }
