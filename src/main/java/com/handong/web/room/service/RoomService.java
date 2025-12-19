@@ -48,4 +48,24 @@ public class RoomService {
     public int countRooms() {
         return roomDao.countAllRooms();
     }
+
+
+    public boolean isWished(int userNo, int roomNo) {
+        return roomDao.checkWish(userNo, roomNo) > 0;
+    }
+
+    // 2. 찜 토글 (버튼 클릭 시: 찜 했으면 취소, 안 했으면 추가)
+    public boolean toggleWish(int userNo, int roomNo) {
+        int count = roomDao.checkWish(userNo, roomNo);
+
+        if (count > 0) {
+            // 이미 찜 상태 -> 삭제
+            roomDao.removeWish(userNo, roomNo);
+            return false; // 결과: 찜 해제됨 (빈 하트)
+        } else {
+            // 찜 안 된 상태 -> 추가
+            roomDao.addWish(userNo, roomNo);
+            return true;  // 결과: 찜 됨 (꽉 찬 하트)
+        }
+    }
 }

@@ -12,7 +12,9 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Controller
@@ -75,10 +77,48 @@ public class RoomController {
     }
 
     @GetMapping("/detail")
-    public String roomDetail(@RequestParam("id") int roomNo, Model model) {
+    public String roomDetail(@RequestParam("id") int roomNo, Model model, HttpSession session) {
         RoomVO room = roomService.getRoomDetail(roomNo);
         model.addAttribute("room", room);
+
+        // 로그인한 사용자인 경우, 찜 여부 확인
+        UserVO loginUser = (UserVO) session.getAttribute("loginUser");
+        boolean isWished = false;
+
+        if (loginUser != null) {
+            isWished = roomService.isWished(loginUser.getUserNo(), roomNo);
+        }
+
+        model.addAttribute("isWished", isWished); // JSP로 전달
+
         return "room/roomDetail";
+    }
+
+    // ▼▼▼ [추가됨] 찜 토글 기능 (AJAX 요청 처리) ▼▼▼
+    @ResponseBody
+    @PostMapping("/like")
+    public Map<String, Object> toggleLike(@RequestBody Map<String, Integer> params, HttpSession session) {
+        Map<String, Object> result = new HashMap<>();
+        UserVO loginUser = (UserVO) session.getAttribute("loginUser");
+
+        // 1. 비로그인 처리
+        if (loginUser == null) {
+            result.put("status", "fail");
+            result.put("message", "로그인이 필요합니다.");
+            return result;
+        }
+
+        // 2. 파라미터 받기
+        int roomNo = params.get("roomNo");
+        int userNo = loginUser.getUserNo();
+
+        // 3. 서비스 호출 (true:찜됨, false:해제됨)
+        boolean liked = roomService.toggleWish(userNo, roomNo);
+
+        result.put("status", "success");
+        result.put("liked", liked);
+
+        return result;
     }
 
     // ▼▼▼ [추가] 수정 페이지 이동 (GET) ▼▼▼

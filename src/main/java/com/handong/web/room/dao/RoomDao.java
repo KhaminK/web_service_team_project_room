@@ -27,4 +27,13 @@ public interface RoomDao {
     void updateRoom(RoomVO vo);
 
     int countAllRooms();
+
+    // 1. 찜 여부 확인 (있으면 1, 없으면 0)
+    int checkWish(@Param("userNo") int userNo, @Param("roomNo") int roomNo);
+
+    // 2. 찜 추가
+    void addWish(@Param("userNo") int userNo, @Param("roomNo") int roomNo);
+
+    // 3. 찜 삭제
+    void removeWish(@Param("userNo") int userNo, @Param("roomNo") int roomNo);
 }

@@ -1,6 +1,7 @@
 package com.handong.web.room.service;
 
 import com.handong.web.room.dao.UserDao;
+import com.handong.web.room.vo.RoomVO;
 import com.handong.web.room.vo.UserVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -47,4 +48,10 @@ public class UserService {
         public UserVO getUser ( int userNo){
             return userDao.getUser(userNo);
         }
+
+    public List<RoomVO> getWishList(int userNo) {
+        // DAO한테 "이 유저가 찜한 거 다 내놔"라고 시킵니다.
+        return userDao.selectWishList(userNo);
+    }
+
     }

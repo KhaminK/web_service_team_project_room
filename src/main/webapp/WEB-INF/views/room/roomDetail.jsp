@@ -3,8 +3,9 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ include file="../include/header.jsp" %>
 
-<div class="row">
-    <div class="col-lg-7 mb-4">
+<div class="row align-items-center mb-4">
+
+    <div class="col-lg-7">
         <div class="bg-light rounded-4 overflow-hidden shadow-sm position-relative" style="height: 450px;">
             <c:choose>
                 <c:when test="${not empty room.filename1 or not empty room.filename2 or not empty room.filename3}">
@@ -91,6 +92,7 @@
                     <div>
                         <span class="d-block fw-bold text-dark">작성자</span>
                         <span class="text-muted small d-flex align-items-center">
+                            ${room.writerName}
                             <c:choose>
                                 <c:when test="${room.writerGender == 'M'}">
                                     <span class="badge bg-primary bg-opacity-10 text-primary border border-primary ms-2" style="font-size: 0.75rem;">남성</span>
@@ -104,15 +106,29 @@
                 </div>
             </div>
 
-            <div class="mt-auto d-grid gap-2">
-                <button class="btn btn-primary btn-lg">연락하기</button>
+            <div class="mt-auto">
+                <div class="d-flex gap-2">
+                    <button class="btn btn-primary btn-lg flex-grow-1 shadow-sm">연락하기</button>
+
+                    <button type="button" class="btn btn-outline-danger btn-lg" onclick="toggleWish()">
+                        <i class="bi ${isWished ? 'bi-heart-fill' : 'bi-heart'}" id="wishIcon"></i>
+                    </button>
+                </div>
+
                 <c:if test="${sessionScope.loginUser.userNo == room.writerId}">
                     <div class="row g-2 mt-2">
                         <div class="col-6">
-                            <a href="${pageContext.request.contextPath}/room/edit?id=${room.roomNo}" class="btn btn-light border w-100 fw-bold">수정</a>
+                            <a href="${pageContext.request.contextPath}/room/edit?id=${room.roomNo}"
+                               class="btn btn-outline-secondary w-100 fw-bold">
+                                <i class="bi bi-pencil-square"></i> 수정
+                            </a>
                         </div>
                         <div class="col-6">
-                            <a href="${pageContext.request.contextPath}/room/delete?id=${room.roomNo}" onclick="return confirm('정말 삭제하시겠습니까?')" class="btn btn-light border w-100 fw-bold text-danger">삭제</a>
+                            <a href="${pageContext.request.contextPath}/room/delete?id=${room.roomNo}"
+                               onclick="return confirm('정말로 삭제하시겠습니까?\n삭제 후에는 복구할 수 없습니다.')"
+                               class="btn btn-outline-danger w-100 fw-bold">
+                                <i class="bi bi-trash"></i> 삭제
+                            </a>
                         </div>
                     </div>
                 </c:if>
@@ -121,40 +137,41 @@
     </div>
 </div>
 
-<div class="d-flex mb-3">
-    <i class="bi bi-geo-alt-fill text-muted me-3 fs-5"></i>
-    <div class="w-100">
-        <span class="d-block fw-bold text-dark">주소</span>
-        <span class="text-muted small mb-2 d-block">${room.address} ${room.addressDetail}</span>
-
-        <div id="map" style="width:100%; height:300px; border-radius: 12px; border:1px solid #eee;"></div>
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="custom-card p-4">
+            <div class="d-flex mb-3">
+                <i class="bi bi-map-fill text-muted me-3 fs-5"></i>
+                <div class="w-100">
+                    <span class="d-block fw-bold text-dark mb-2">위치 정보</span>
+                    <span class="text-muted small mb-3 d-block">${room.address} ${room.addressDetail}</span>
+                    <div id="map" style="width:100%; height:350px; border-radius: 12px; border:1px solid #eee;"></div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
 <div class="row mt-4">
     <div class="col-12">
-        <div class="custom-card">
+        <div class="custom-card p-4">
             <h4 class="fw-bold mb-4">상세 설명</h4>
             <p class="text-muted" style="line-height: 1.8; white-space: pre-wrap;">${room.content}</p>
         </div>
     </div>
 </div>
 
-<script>
-    document.addEventListener("DOMContentLoaded", function(){
-        var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
-        var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
-            return new bootstrap.Popover(popoverTriggerEl)
-        })
-    });
-
-</script>
-
 <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=a9c5fde88c6c3ba7021a5c783419cfb1&libraries=services&autoload=false"></script>
 
 <script>
     document.addEventListener("DOMContentLoaded", function(){
+        // 1. 팝오버 초기화
+        var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+        var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+            return new bootstrap.Popover(popoverTriggerEl)
+        })
 
+        // 2. 카카오맵 로드
         kakao.maps.load(function() {
             var mapContainer = document.getElementById('map');
             var mapOption = {
@@ -168,15 +185,12 @@
             var detailAddr = '${room.addressDetail}'.trim();
             var fullAddr = mainAddr + " " + detailAddr;
 
-            console.log("1순위 검색어:", fullAddr);
-
             var ps = new kakao.maps.services.Places();
             var geocoder = new kakao.maps.services.Geocoder();
 
             // [1단계] 주소 + 상세주소 (장소 검색)
             ps.keywordSearch(fullAddr, function(data, status) {
                 if (status === kakao.maps.services.Status.OK) {
-                    console.log("[성공] 1단계: 상세주소 장소 검색됨");
                     displayMarker(data[0].y, data[0].x);
                 } else {
                     runStep2();
@@ -187,7 +201,6 @@
             function runStep2() {
                 ps.keywordSearch(mainAddr, function(data, status) {
                     if (status === kakao.maps.services.Status.OK) {
-                        console.log("[성공] 2단계: 기본주소 장소 검색됨");
                         displayMarker(data[0].y, data[0].x);
                     } else {
                         runStep3();
@@ -195,48 +208,31 @@
                 });
             }
 
-            // [3단계] 기본 주소 (주소 검색) -> 여기서 실패하면 에러 메시지 표시!
+            // [3단계] 기본 주소 (주소 검색)
             function runStep3() {
                 geocoder.addressSearch(mainAddr, function(result, status) {
                     if (status === kakao.maps.services.Status.OK) {
-                        console.log("[성공] 3단계: 지리적 주소 검색됨");
                         displayMarker(result[0].y, result[0].x);
                     } else {
-                        console.log("[최종 실패] 위치를 찾을 수 없음 -> 에러 메시지 표시");
-
-                        // ===============================================
-                        // [핵심] 지도 영역을 에러 메시지로 덮어쓰기
-                        // ===============================================
                         showErrorDisplay();
                     }
                 });
             }
 
-            // 지도 영역을 에러 화면으로 바꾸는 함수
             function showErrorDisplay() {
-                // 1. 스타일 변경 (회색 배경, 중앙 정렬)
                 mapContainer.style.backgroundColor = "#f8f9fa";
                 mapContainer.style.display = "flex";
                 mapContainer.style.flexDirection = "column";
                 mapContainer.style.alignItems = "center";
                 mapContainer.style.justifyContent = "center";
-                mapContainer.style.border = "1px solid #e9ecef";
-
-                // 2. 내용 교체 (HTML 주입)
-                // Bootstrap 아이콘과 스타일을 사용해 깔끔하게 표시
                 mapContainer.innerHTML = `
                     <div class="text-center text-secondary">
                         <i class="bi bi-geo-alt-fill" style="font-size: 3rem; color: #dee2e6;"></i>
-                        <h5 class="fw-bold mt-3">위치 정보를 불러올 수 없습니다.</h5>
-                        <p class="small text-muted mb-0">
-                            입력된 주소: <strong>` + mainAddr + `</strong><br>
-                            지도에 표시할 수 없는 주소입니다.
-                        </p>
+                        <h5 class="fw-bold mt-3">위치 정보를 표시할 수 없습니다.</h5>
                     </div>
                 `;
             }
 
-            // 공통 마커 표시 함수
             function displayMarker(lat, lng) {
                 var coords = new kakao.maps.LatLng(lat, lng);
                 var marker = new kakao.maps.Marker({ map: map, position: coords });
@@ -248,15 +244,51 @@
                 infowindow.open(map, marker);
                 map.setCenter(coords);
             }
-
-        }); // kakao.maps.load end
-
-        // 팝오버 초기화
-        var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
-        var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
-            return new bootstrap.Popover(popoverTriggerEl)
-        })
+        });
     });
+
+    // 3. 찜하기 기능 (복구됨)
+    function toggleWish() {
+        // 로그인 체크
+        <c:if test="${empty sessionScope.loginUser}">
+        if(confirm("로그인이 필요한 서비스입니다.\n로그인 페이지로 이동하시겠습니까?")) {
+            location.href = "${pageContext.request.contextPath}/user/login";
+        }
+        return;
+        </c:if>
+
+        const roomNo = '${room.roomNo}';
+        const icon = document.getElementById('wishIcon');
+
+        // 서버에 찜 요청
+        fetch('${pageContext.request.contextPath}/room/like', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ roomNo: parseInt(roomNo) })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    if (data.liked) {
+                        // 찜 성공 -> 꽉 찬 하트로 변경
+                        icon.classList.remove('bi-heart');
+                        icon.classList.add('bi-heart-fill');
+                    } else {
+                        // 찜 해제 -> 빈 하트로 변경
+                        icon.classList.remove('bi-heart-fill');
+                        icon.classList.add('bi-heart');
+                    }
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert("오류가 발생했습니다.");
+            });
+    }
 </script>
 
 <%@ include file="../include/footer.jsp" %>

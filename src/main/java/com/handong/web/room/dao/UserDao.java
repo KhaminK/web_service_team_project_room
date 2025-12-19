@@ -1,5 +1,6 @@
 package com.handong.web.room.dao;
 
+import com.handong.web.room.vo.RoomVO;
 import com.handong.web.room.vo.UserVO;
 import org.springframework.stereotype.Repository;
 import java.util.List;
@@ -29,4 +30,5 @@ public interface UserDao {
     // 아래 두 줄을 인터페이스 안에 추가하세요
     public void updateUser(UserVO vo);
     public UserVO getUser(int userNo);
+    List<RoomVO> selectWishList(int userNo);
 }

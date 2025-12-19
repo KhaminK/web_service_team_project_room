@@ -1,9 +1,11 @@
 package com.handong.web.room.controller;
 
 import com.handong.web.room.service.UserService;
+import com.handong.web.room.vo.RoomVO;
 import com.handong.web.room.vo.UserVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +18,7 @@ import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
+import java.util.List;
 
 @Controller
 @RequestMapping("/user")
@@ -214,5 +217,17 @@ public class UserController {
         session.setAttribute("loginUser", updatedUser);
 
         return "redirect:/user/profile";
+    }
+
+    @GetMapping("/wishlist")
+    public String wishlist(HttpSession session, Model model) {
+        UserVO loginUser = (UserVO) session.getAttribute("loginUser");
+        if (loginUser == null) return "redirect:/user/login";
+
+        // 찜한 방 목록 가져오기 (Service에 메서드 추가 필요)
+        List<RoomVO> wishList = userService.getWishList(loginUser.getUserNo());
+
+        model.addAttribute("wishList", wishList);
+        return "user/wishlist"; // 아래에서 만들 JSP 파일명
     }
 }

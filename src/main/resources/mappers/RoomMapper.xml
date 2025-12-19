@@ -94,4 +94,20 @@
         WHERE room_no = #{roomNo}
     </update>
 
+    <select id="checkWish" resultType="int">
+        SELECT COUNT(*)
+        FROM wishlist_tbl
+        WHERE user_no = #{userNo} AND room_no = #{roomNo}
+    </select>
+
+    <insert id="addWish">
+        INSERT INTO wishlist_tbl (user_no, room_no)
+        VALUES (#{userNo}, #{roomNo})
+    </insert>
+
+    <delete id="removeWish">
+        DELETE FROM wishlist_tbl
+        WHERE user_no = #{userNo} AND room_no = #{roomNo}
+    </delete>
+
 </mapper>

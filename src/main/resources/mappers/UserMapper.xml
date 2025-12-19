@@ -68,4 +68,12 @@
         SELECT * FROM tb_user WHERE user_no = #{userNo}
     </select>
 
+    <select id="selectWishList" resultType="com.handong.web.room.vo.RoomVO">
+        SELECT r.*
+        FROM tb_room r
+                 JOIN wishlist_tbl w ON r.room_no = w.room_no
+        WHERE w.user_no = #{userNo}
+        ORDER BY w.created_at DESC
+    </select>
+
 </mapper>
