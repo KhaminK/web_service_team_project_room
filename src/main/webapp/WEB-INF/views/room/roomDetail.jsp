@@ -121,6 +121,16 @@
     </div>
 </div>
 
+<div class="d-flex mb-3">
+    <i class="bi bi-geo-alt-fill text-muted me-3 fs-5"></i>
+    <div class="w-100">
+        <span class="d-block fw-bold text-dark">주소</span>
+        <span class="text-muted small mb-2 d-block">${room.address} ${room.addressDetail}</span>
+
+        <div id="map" style="width:100%; height:300px; border-radius: 12px; border:1px solid #eee;"></div>
+    </div>
+</div>
+
 <div class="row mt-4">
     <div class="col-12">
         <div class="custom-card">
@@ -132,6 +142,116 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function(){
+        var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+        var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+            return new bootstrap.Popover(popoverTriggerEl)
+        })
+    });
+
+</script>
+
+<script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=a9c5fde88c6c3ba7021a5c783419cfb1&libraries=services&autoload=false"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+
+        kakao.maps.load(function() {
+            var mapContainer = document.getElementById('map');
+            var mapOption = {
+                center: new kakao.maps.LatLng(33.450701, 126.570667),
+                level: 3
+            };
+            var map = new kakao.maps.Map(mapContainer, mapOption);
+
+            // 데이터 준비
+            var mainAddr = '${room.address}'.trim();
+            var detailAddr = '${room.addressDetail}'.trim();
+            var fullAddr = mainAddr + " " + detailAddr;
+
+            console.log("1순위 검색어:", fullAddr);
+
+            var ps = new kakao.maps.services.Places();
+            var geocoder = new kakao.maps.services.Geocoder();
+
+            // [1단계] 주소 + 상세주소 (장소 검색)
+            ps.keywordSearch(fullAddr, function(data, status) {
+                if (status === kakao.maps.services.Status.OK) {
+                    console.log("[성공] 1단계: 상세주소 장소 검색됨");
+                    displayMarker(data[0].y, data[0].x);
+                } else {
+                    runStep2();
+                }
+            });
+
+            // [2단계] 기본 주소 (장소 검색)
+            function runStep2() {
+                ps.keywordSearch(mainAddr, function(data, status) {
+                    if (status === kakao.maps.services.Status.OK) {
+                        console.log("[성공] 2단계: 기본주소 장소 검색됨");
+                        displayMarker(data[0].y, data[0].x);
+                    } else {
+                        runStep3();
+                    }
+                });
+            }
+
+            // [3단계] 기본 주소 (주소 검색) -> 여기서 실패하면 에러 메시지 표시!
+            function runStep3() {
+                geocoder.addressSearch(mainAddr, function(result, status) {
+                    if (status === kakao.maps.services.Status.OK) {
+                        console.log("[성공] 3단계: 지리적 주소 검색됨");
+                        displayMarker(result[0].y, result[0].x);
+                    } else {
+                        console.log("[최종 실패] 위치를 찾을 수 없음 -> 에러 메시지 표시");
+
+                        // ===============================================
+                        // [핵심] 지도 영역을 에러 메시지로 덮어쓰기
+                        // ===============================================
+                        showErrorDisplay();
+                    }
+                });
+            }
+
+            // 지도 영역을 에러 화면으로 바꾸는 함수
+            function showErrorDisplay() {
+                // 1. 스타일 변경 (회색 배경, 중앙 정렬)
+                mapContainer.style.backgroundColor = "#f8f9fa";
+                mapContainer.style.display = "flex";
+                mapContainer.style.flexDirection = "column";
+                mapContainer.style.alignItems = "center";
+                mapContainer.style.justifyContent = "center";
+                mapContainer.style.border = "1px solid #e9ecef";
+
+                // 2. 내용 교체 (HTML 주입)
+                // Bootstrap 아이콘과 스타일을 사용해 깔끔하게 표시
+                mapContainer.innerHTML = `
+                    <div class="text-center text-secondary">
+                        <i class="bi bi-geo-alt-fill" style="font-size: 3rem; color: #dee2e6;"></i>
+                        <h5 class="fw-bold mt-3">위치 정보를 불러올 수 없습니다.</h5>
+                        <p class="small text-muted mb-0">
+                            입력된 주소: <strong>` + mainAddr + `</strong><br>
+                            지도에 표시할 수 없는 주소입니다.
+                        </p>
+                    </div>
+                `;
+            }
+
+            // 공통 마커 표시 함수
+            function displayMarker(lat, lng) {
+                var coords = new kakao.maps.LatLng(lat, lng);
+                var marker = new kakao.maps.Marker({ map: map, position: coords });
+
+                var displayText = detailAddr ? detailAddr : mainAddr;
+                var iwContent = '<div style="padding:5px; width:150px; text-align:center; font-size:12px;">' + displayText + '</div>';
+
+                var infowindow = new kakao.maps.InfoWindow({ content : iwContent });
+                infowindow.open(map, marker);
+                map.setCenter(coords);
+            }
+
+        }); // kakao.maps.load end
+
+        // 팝오버 초기화
         var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
         var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
             return new bootstrap.Popover(popoverTriggerEl)
