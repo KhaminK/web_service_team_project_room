@@ -23,6 +23,8 @@
         <result property="filename3" column="filename3"/>
         <result property="writerName" column="writer_name"/>
         <result property="writerGender" column="writer_gender"/>
+        <result property="writerPhone" column="writer_phone"/>
+        <result property="writerProfileImg" column="writer_profile_img"/>
     </resultMap>
 
     <insert id="insertRoom" parameterType="com.handong.web.room.vo.RoomVO">
@@ -67,8 +69,11 @@
         SELECT
             r.*,
             u.name as writer_name,
-            u.gender as writer_gender  FROM tb_room r
-                                                JOIN tb_user u ON r.writer_id = u.user_no
+            u.gender as writer_gender,
+            u.phone as writer_phone,
+            u.profile_img as writer_profile_img
+        FROM tb_room r
+                 JOIN tb_user u ON r.writer_id = u.user_no
         WHERE r.room_no = #{roomNo}
     </select>
 
