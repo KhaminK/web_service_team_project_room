@@ -68,4 +68,8 @@ public class RoomService {
             return true;  // 결과: 찜 됨 (꽉 찬 하트)
         }
     }
+
+    public List<RoomVO> getRoomsByWriter(int userNo) {
+        return roomDao.getRoomsByWriter(userNo); // roomDao 소문자로 통일
+    }
 }

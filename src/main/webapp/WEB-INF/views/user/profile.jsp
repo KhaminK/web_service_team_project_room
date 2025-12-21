@@ -100,7 +100,7 @@
         <ul class="sidebar-menu">
             <li><a href="#" class="sidebar-item active">내 정보</a></li>
             <li><a href="${pageContext.request.contextPath}/user/wishlist" class="sidebar-item">찜한 목록</a></li>
-            <li><a href="#" class="sidebar-item">작성한 글</a></li>
+            <li><a href="${pageContext.request.contextPath}/user/myrooms" class="sidebar-item">작성한 글</a></li>
             <li><a href="${pageContext.request.contextPath}/user/logout" class="sidebar-item logout">로그아웃</a></li>
         </ul>
     </aside>

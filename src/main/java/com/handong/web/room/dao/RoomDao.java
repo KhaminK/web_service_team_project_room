@@ -36,4 +36,6 @@ public interface RoomDao {
 
     // 3. 찜 삭제
     void removeWish(@Param("userNo") int userNo, @Param("roomNo") int roomNo);
+
+    List<RoomVO> getRoomsByWriter(int userNo);
 }

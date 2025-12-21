@@ -1,5 +1,6 @@
 package com.handong.web.room.controller;
 
+import com.handong.web.room.service.RoomService;
 import com.handong.web.room.service.UserService;
 import com.handong.web.room.vo.RoomVO;
 import com.handong.web.room.vo.UserVO;
@@ -26,6 +27,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private RoomService roomService;
 
     // 1. 회원가입 페이지
     @GetMapping("/signup")
@@ -230,4 +234,27 @@ public class UserController {
         model.addAttribute("wishList", wishList);
         return "user/wishlist"; // 아래에서 만들 JSP 파일명
     }
+
+    // UserController.java (또는 RoomController)
+
+    @RequestMapping("/myrooms")
+    public String myRooms(HttpSession session, Model model) {
+        // 1. 로그인한 사용자 정보 가져오기
+        UserVO loginUser = (UserVO) session.getAttribute("loginUser");
+
+        // 로그인이 안 되어 있다면 로그인 페이지로 튕겨내기
+        if (loginUser == null) {
+            return "redirect:/user/login";
+        }
+
+        // 2. 이 사람이 쓴 방 목록 DB에서 가져오기
+        List<RoomVO> myRoomList = roomService.getRoomsByWriter(loginUser.getUserNo());
+
+        // 3. 화면(JSP)으로 리스트 전달하기
+        model.addAttribute("myRoomList", myRoomList);
+
+        // 4. JSP 페이지 열기
+        return "user/myRooms"; // 파일 경로에 맞춰 수정 (views/user/myRooms.jsp 등)
+    }
+
 }

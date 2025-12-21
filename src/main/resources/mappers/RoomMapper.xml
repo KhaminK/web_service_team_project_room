@@ -110,4 +110,14 @@
         WHERE user_no = #{userNo} AND room_no = #{roomNo}
     </delete>
 
+    <select id="getRoomsByWriter" parameterType="int" resultType="com.handong.web.room.vo.RoomVO">
+        SELECT
+            * FROM
+            tb_room
+        WHERE
+            writer_id = #{userNo}
+        ORDER BY
+            room_no DESC
+    </select>
+
 </mapper>
