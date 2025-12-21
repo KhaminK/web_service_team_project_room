@@ -19,13 +19,13 @@ public class RoomService {
     }
 
     // 2. 방 전체 목록 조회
-    public List<RoomVO> getRoomList(String roomType, String sort) {
-        return roomDao.selectRoomList(roomType, sort);
+    public List<RoomVO> getRoomList(String roomType, String sort, String keyword) {
+        return roomDao.selectRoomList(roomType, sort, keyword);
     }
 
     public List<RoomVO> getRoomList() {
-        // 아무 조건이 없으면 -> "전체(all)"를 "최신순(latest)"으로 가져오라고 시킴
-        return getRoomList("all", "latest");
+        // 키워드 자리에 null을 넘겨줘야 함
+        return getRoomList("all", "latest", null);
     }
 
     // 3. 방 상세 정보 조회 (조회수 증가 포함)

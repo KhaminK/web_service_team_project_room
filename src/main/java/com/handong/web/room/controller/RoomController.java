@@ -28,9 +28,10 @@ public class RoomController {
     public String roomList(
             @RequestParam(value = "type", required = false, defaultValue = "all") String roomType,
             @RequestParam(value = "sort", required = false, defaultValue = "latest") String sort,
+            @RequestParam(value="keyword", required=false) String keyword,
             Model model) {
 
-        List<RoomVO> list = roomService.getRoomList(roomType, sort);
+        List<RoomVO> list = roomService.getRoomList(roomType, sort, keyword);
 
         model.addAttribute("roomList", list);
         model.addAttribute("currentType", roomType); // 현재 선택된 필터 유지용

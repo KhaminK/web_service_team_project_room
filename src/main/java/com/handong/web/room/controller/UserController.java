@@ -5,6 +5,7 @@ import com.handong.web.room.service.UserService;
 import com.handong.web.room.vo.RoomVO;
 import com.handong.web.room.vo.UserVO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,9 +16,11 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.UUID;
 import java.util.List;
 
@@ -38,38 +41,57 @@ public class UserController {
     }
 
     // 2. 회원가입 처리 (수정됨: 프로필 사진 업로드 기능 추가)
+    // 2. 회원가입 처리 (수정됨: 알림창 띄우고 이동하기)
     @PostMapping("/signup")
-    public String signupProcess(UserVO vo,
-                                @RequestParam("file") MultipartFile file,
-                                HttpSession session) {
+    public void signupProcess(UserVO vo,
+                              @RequestParam("file") MultipartFile file,
+                              HttpSession session,
+                              HttpServletResponse response) throws IOException {
 
+        // 1. 파일 업로드 로직 (기존과 동일)
         if (file != null && !file.isEmpty()) {
             try {
-                // 1. 저장할 폴더 경로 가져오기 (webapp/resources/upload)
                 String path = session.getServletContext().getRealPath("/resources/upload");
-
-                // 2. 폴더가 없으면 만들기
                 File dir = new File(path);
                 if (!dir.exists()) dir.mkdirs();
 
-                // 3. 파일명 중복 방지 (UUID 사용)
                 String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
-
-                // 4. 서버에 파일 저장
                 file.transferTo(new File(path, fileName));
-
-                // 5. DB에 저장할 VO에 파일명 세팅
                 vo.setProfileImg(fileName);
-
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
 
-        // 6. 회원가입 진행 (DB 저장)
-        userService.signup(vo);
+        response.setContentType("text/html; charset=UTF-8");
+        PrintWriter out = response.getWriter();
 
-        return "redirect:/user/login";
+        try {
+            // 2. 회원가입 시도 (DB 저장)
+            userService.signup(vo);
+
+            // 3. 성공 시: 알림창 띄우고 로그인 페이지로 이동
+            out.println("<script>");
+            out.println("alert('회원가입이 정상적으로 완료되었습니다.\\n로그인 페이지로 이동합니다.');");
+            out.println("location.href='login';");
+            out.println("</script>");
+
+        } catch (DuplicateKeyException e) {
+            // 4. 실패 시 (중복된 학번일 경우): 알림창 띄우고 뒤로가기
+            out.println("<script>");
+            out.println("alert('이미 가입된 학번(ID)입니다.\\n다른 학번을 사용하거나 로그인을 해주세요.');");
+            out.println("history.back();"); // 이전 페이지(회원가입 폼)로 돌려보냄
+            out.println("</script>");
+        } catch (Exception e) {
+            // 5. 그 외 알 수 없는 에러 처리
+            e.printStackTrace();
+            out.println("<script>");
+            out.println("alert('회원가입 중 오류가 발생했습니다.');");
+            out.println("history.back();");
+            out.println("</script>");
+        }
+
+        out.flush();
     }
 
     // 3. 로그인 페이지

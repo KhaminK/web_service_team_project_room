@@ -37,22 +37,29 @@
 </insert>
 
     <select id="selectRoomList" resultMap="RoomResultMap">
-        SELECT r.*, u.name as writer_name
-        FROM tb_room r
-        JOIN tb_user u ON r.writer_id = u.user_no
+        SELECT * FROM tb_room
         WHERE 1=1
-        <if test="roomType != null and roomType != '' and roomType != 'all'">
-            AND r.room_type = #{roomType}
+
+        <if test="roomType != 'all'">
+            AND room_type = #{roomType}
         </if>
 
-        ORDER BY
+        <if test="keyword != null and keyword != ''">
+            AND (
+            title LIKE CONCAT('%', #{keyword}, '%')
+            OR address LIKE CONCAT('%', #{keyword}, '%')
+            )
+        </if>
+
         <choose>
             <when test="sort == 'price_asc'">
-                r.price ASC  </when>
+                ORDER BY price ASC
+            </when>
             <when test="sort == 'price_desc'">
-                r.price DESC </when>
-            <otherwise>
-                r.created_at DESC </otherwise>
+                ORDER BY price DESC
+            </when>
+            <otherwise> ORDER BY room_no DESC
+            </otherwise>
         </choose>
     </select>
 

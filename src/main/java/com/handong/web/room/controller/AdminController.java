@@ -26,7 +26,7 @@ public class AdminController {
     @Autowired
     private RoomService roomService;
     @Autowired
-    private AdminDao adminDao; // [추가] 차트 데이터용
+    private AdminDao adminDao;
 
     private boolean isAdmin(HttpSession session) {
         UserVO loginUser = (UserVO) session.getAttribute("loginUser");
@@ -39,13 +39,17 @@ public class AdminController {
 
         // 1. 기존 데이터 (목록 및 총계)
         List<UserVO> userList = userService.getAllUsers();
-        List<RoomVO> roomList = roomService.getRoomList();
+
+        // [수정됨] roomType, sort, keyword 변수가 없으므로 기본값으로 호출
+        // 또는 roomService.getRoomList(); (인자 없는 버전)을 사용해도 됩니다.
+        List<RoomVO> roomList = roomService.getRoomList("all", "latest", null);
+
         model.addAttribute("userList", userList);
         model.addAttribute("roomList", roomList);
         model.addAttribute("totalUsers", userList.size());
         model.addAttribute("totalRooms", roomService.countRooms());
 
-        // 2. [추가] 차트 데이터 가공 (List<Map> -> JSON 형태의 문자열)
+        // 2. 차트 데이터 가공
         List<Map<String, Object>> userStats = adminDao.selectRecentUserStats();
         List<Map<String, Object>> roomStats = adminDao.selectRecentRoomStats();
 
@@ -57,19 +61,18 @@ public class AdminController {
         String roomLabels = roomStats.stream().map(m -> "'" + m.get("period") + "'").collect(Collectors.joining(","));
         String roomCounts = roomStats.stream().map(m -> String.valueOf(m.get("count"))).collect(Collectors.joining(","));
 
-        // 만약 데이터가 하나도 없으면 기본값 넣어주기 (차트 깨짐 방지)
+        // 데이터 없음 처리
         if (userLabels.isEmpty()) { userLabels = "'데이터 없음'"; userCounts = "0"; }
         if (roomLabels.isEmpty()) { roomLabels = "'데이터 없음'"; roomCounts = "0"; }
 
-        model.addAttribute("userLabels", userLabels); // 예: '10월','11월','12월'
-        model.addAttribute("userCounts", userCounts); // 예: 10, 5, 12
+        model.addAttribute("userLabels", userLabels);
+        model.addAttribute("userCounts", userCounts);
         model.addAttribute("roomLabels", roomLabels);
         model.addAttribute("roomCounts", roomCounts);
 
         return "admin/dashboard";
     }
 
-    // (삭제 관련 메서드들은 그대로 유지...)
     @GetMapping("/user/delete")
     public String deleteUser(@RequestParam("id") int userNo, HttpSession session) {
         if (!isAdmin(session)) return "redirect:/";

@@ -13,8 +13,10 @@ public interface RoomDao {
     void insertRoom(RoomVO vo);
 
     // 2. 매물 전체 목록 조회 (Mapper ID: selectRoomList)
-    List<RoomVO> selectRoomList(@Param("roomType") String roomType, @Param("sort") String sort);
-
+// 파라미터에 @Param("keyword") 추가
+    List<RoomVO> selectRoomList(@Param("roomType") String roomType,
+                                @Param("sort") String sort,
+                                @Param("keyword") String keyword);
     // 3. 매물 상세 조회 (Mapper ID: selectRoomDetail)
     RoomVO selectRoomDetail(int roomNo);
 
